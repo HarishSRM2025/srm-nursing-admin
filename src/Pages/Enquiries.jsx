@@ -265,7 +265,7 @@ export default function Enquiries() {
         >
           <MdMail /> Enquiries & Messages ({contacts.length})
         </button>
-        <button
+        {/*<button
           onClick={() => setActiveTab('departments')}
           style={{
             padding: '8px 18px',
@@ -282,8 +282,9 @@ export default function Enquiries() {
             transition: 'all 0.2s'
           }}
         >
-          <MdBusiness /> General Enquiries by Department ({departments.length})
+           <MdBusiness /> General Enquiries by Department ({departments.length}) 
         </button>
+          */}
       </div>
 
       {activeTab === 'enquiries' ? (
@@ -602,67 +603,69 @@ export default function Enquiries() {
         </>
       ) : (
         /* Departments Management Tab */
-        <div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
-            {departments.map((d, i) => (
-              <div
-                key={d._id || i}
-                style={{
-                  background: 'white',
-                  borderRadius: 16,
-                  overflow: 'hidden',
-                  border: '1px solid var(--border-light)',
-                  boxShadow: 'var(--shadow-sm)',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}
-              >
-                {d.img && (
-                  <div style={{ height: 140, overflow: 'hidden', position: 'relative' }}>
-                    <img
-                      src={d.img}
-                      alt={d.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={e => { e.target.style.display = 'none'; }}
-                    />
-                  </div>
-                )}
-                <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                    <h3 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{d.name}</h3>
-                    <span className={`badge ${d.status === 'active' ? 'badge-active' : 'badge-inactive'}`}>
-                      <span className="badge-dot"></span>{d.status}
-                    </span>
-                  </div>
+        // <div>
+        //   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+        //     {departments.map((d, i) => (
+        //       <div
+        //         key={d._id || i}
+        //         style={{
+        //           background: 'white',
+        //           borderRadius: 16,
+        //           overflow: 'hidden',
+        //           border: '1px solid var(--border-light)',
+        //           boxShadow: 'var(--shadow-sm)',
+        //           display: 'flex',
+        //           flexDirection: 'column'
+        //         }}
+        //       >
+        //         {d.img && (
+        //           <div style={{ height: 140, overflow: 'hidden', position: 'relative' }}>
+        //             <img
+        //               src={d.img}
+        //               alt={d.name}
+        //               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        //               onError={e => { e.target.style.display = 'none'; }}
+        //             />
+        //           </div>
+        //         )}
+        //         <div style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
+        //           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+        //             <h3 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{d.name}</h3>
+        //             <span className={`badge ${d.status === 'active' ? 'badge-active' : 'badge-inactive'}`}>
+        //               <span className="badge-dot"></span>{d.status}
+        //             </span>
+        //           </div>
 
-                  <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.4, marginBottom: 14, flex: 1 }}>
-                    {d.desc}
-                  </p>
+        //           <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.4, marginBottom: 14, flex: 1 }}>
+        //             {d.desc}
+        //           </p>
 
-                  <div style={{ background: 'var(--body-bg)', padding: '10px 14px', borderRadius: 8, marginBottom: 16 }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <MdMail /> {d.email}
-                    </div>
-                    {d.phone && (
-                      <div style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                        <MdPhone /> {d.phone}
-                      </div>
-                    )}
-                  </div>
+        //           <div style={{ background: 'var(--body-bg)', padding: '10px 14px', borderRadius: 8, marginBottom: 16 }}>
+        //             <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+        //               <MdMail /> {d.email}
+        //             </div>
+        //             {d.phone && (
+        //               <div style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+        //                 <MdPhone /> {d.phone}
+        //               </div>
+        //             )}
+        //           </div>
 
-                  <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
-                    <button className="btn-edit" style={{ flex: 1, justifyContent: 'center' }} onClick={() => openEditDept(d)}>
-                      <MdEdit /> Edit Department
-                    </button>
-                    <button className="btn-danger" onClick={() => setDeleteDeptConfirm(d._id)}>
-                      <MdDelete />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        //           <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
+        //             <button className="btn-edit" style={{ flex: 1, justifyContent: 'center' }} onClick={() => openEditDept(d)}>
+        //               <MdEdit /> Edit Department
+        //             </button>
+        //             <button className="btn-danger" onClick={() => setDeleteDeptConfirm(d._id)}>
+        //               <MdDelete />
+        //             </button>
+        //           </div>
+        //         </div>
+        //       </div>
+        //     ))}
+        //   </div>
+        // </div>
+
+        <></>
       )}
 
       {/* View Enquiry Details Modal */}
