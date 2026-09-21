@@ -26,6 +26,8 @@ const navItems = [
   {
     section: 'INSTITUTION & ACADEMICS',
     items: [
+      { id: 'affiliations', label: 'Affiliations', icon: MdNewspaper, route: '/affiliations' },
+      { id: 'statutes', label: 'Statutory Disclosure', icon: MdNewspaper, route: '/statutes' },
       { id: 'leadership', label: 'Leadership', icon: MdGroups, route: '/leadership' },
       { id: 'research', label: 'Research & Publications', icon: MdScience, route: '/research' },
       { id: 'achievements', label: 'Student Achievements', icon: MdEmojiEvents, route: '/achievements' },

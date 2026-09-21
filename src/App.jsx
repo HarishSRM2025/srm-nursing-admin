@@ -8,6 +8,8 @@ import Enquiries from './Pages/Enquiries';
 import NewsEvents from './Pages/NewsEvents';
 import Sliders from './Pages/Sliders';
 import Newsletters from './Pages/Newsletters';
+import Statutes from './Pages/Statutes';
+import Affiliations from './Pages/Affiliations';
 import Leadership from './Pages/Leadership';
 import Research from './Pages/Research';
 import Achievements from './Pages/Achievements';
@@ -21,6 +23,8 @@ const pageMap = {
   '/enquiries': { id: 'enquiries', title: 'Contact Enquiries' },
   '/sliders': { id: 'sliders', title: 'Home Sliders' },
   '/news-events': { id: 'news', title: 'News & Events' },
+  '/affiliations': { id: 'affiliations', title: 'Affiliations' },
+  '/statutes': { id: 'statutes', title: 'Statutory Disclosure' },
   '/newsletters': { id: 'newsletters', title: 'Newsletters' },
   '/leadership': { id: 'leadership', title: 'Leadership' },
   '/research': { id: 'research', title: 'Research & Publications' },
@@ -58,6 +62,8 @@ function AdminLayout() {
             <Route path="/enquiries" element={<Enquiries />} />
             <Route path="/sliders" element={<Sliders />} />
             <Route path="/news-events" element={<NewsEvents />} />
+            <Route path="/affiliations" element={<Affiliations />} />
+            <Route path="/statutes" element={<Statutes />} />
             <Route path="/newsletters" element={<Newsletters />} />
             <Route path="/leadership" element={<Leadership />} />
             <Route path="/research" element={<Research />} />
