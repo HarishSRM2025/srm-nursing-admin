@@ -6,6 +6,7 @@ import Auth from './Pages/Auth';
 import Dashboard from './Pages/Dashboard';
 import Enquiries from './Pages/Enquiries';
 import NewsEvents from './Pages/NewsEvents';
+import EventBulkUpload from './Pages/EventBulkUpload';
 import Sliders from './Pages/Sliders';
 import Newsletters from './Pages/Newsletters';
 import Statutes from './Pages/Statutes';
@@ -22,6 +23,7 @@ const pageMap = {
   '/': { id: 'dashboard', title: 'Dashboard' },
   '/enquiries': { id: 'enquiries', title: 'Contact Enquiries' },
   '/sliders': { id: 'sliders', title: 'Home Sliders' },
+  '/news-events/bulk-upload': { id: 'events-import', title: 'Bulk Upload Events' },
   '/news-events': { id: 'news', title: 'News & Events' },
   '/affiliations': { id: 'affiliations', title: 'Affiliations' },
   '/statutes': { id: 'statutes', title: 'Statutory Disclosure' },
@@ -62,6 +64,7 @@ function AdminLayout() {
             <Route path="/enquiries" element={<Enquiries />} />
             <Route path="/sliders" element={<Sliders />} />
             <Route path="/news-events" element={<NewsEvents />} />
+            <Route path="/news-events/bulk-upload" element={<EventBulkUpload />} />
             <Route path="/affiliations" element={<Affiliations />} />
             <Route path="/statutes" element={<Statutes />} />
             <Route path="/newsletters" element={<Newsletters />} />

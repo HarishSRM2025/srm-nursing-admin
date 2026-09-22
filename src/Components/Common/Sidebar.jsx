@@ -4,6 +4,7 @@ import {
   MdDashboard,
   MdSlideshow,
   MdCampaign,
+  MdCloudUpload,
   MdNewspaper,
   MdGroups,
   MdScience,
@@ -20,6 +21,7 @@ const navItems = [
       { id: 'enquiries', label: 'Contact Enquiries', icon: MdMail, route: '/enquiries' },
       { id: 'sliders', label: 'Home Sliders', icon: MdSlideshow, route: '/sliders' },
       { id: 'news', label: 'News & Events', icon: MdCampaign, route: '/news-events' },
+      { id: 'events-import', label: 'Bulk Upload Events', icon: MdCloudUpload, route: '/news-events/bulk-upload' },
       { id: 'newsletters', label: 'Newsletters', icon: MdNewspaper, route: '/newsletters' },
     ]
   },

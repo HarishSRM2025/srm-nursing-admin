@@ -1,0 +1,11 @@
+.event-import-card { padding: 24px; margin-bottom: 20px; }
+.event-import-card h3 { font-size: 16px; color: var(--text-primary); }
+.event-import-card p { margin: 12px 0; color: var(--text-secondary); font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.event-import-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.event-import-example { display: block; padding: 12px; background: var(--body-bg); border-radius: 8px; font-size: 12px; overflow-wrap: anywhere; }
+.event-import-card summary { cursor: pointer; font-size: 13px; font-weight: 600; }
+.event-import-card .event-import-error { color: var(--danger); }
+.event-import .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+.event-import td { white-space: normal; overflow-wrap: anywhere; max-width: 420px; }
+.event-import .table-wrap { margin: 16px 0; }
+@media (max-width: 600px) { .event-import-card { padding: 16px; } }

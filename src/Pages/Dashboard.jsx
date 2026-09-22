@@ -34,7 +34,7 @@ export default function Dashboard() {
         const [contactRes, slidersRes, eventsRes, newslettersRes, leadershipRes, pubsRes, achieveRes] = await Promise.allSettled([
           fetch(`${API_URL}/api/contact`),
           fetch(`${API_URL}/api/slider/get-slider`),
-          fetch(`${API_URL}/api/events/get-all-events`),
+          fetch(`${API_URL}/api/events/get-all-events?limit=1`),
           fetch(`${API_URL}/api/newsletter`),
           fetch(`${API_URL}/api/leadership/get`),
           fetch(`${API_URL}/api/publication`),
@@ -56,7 +56,7 @@ export default function Dashboard() {
         let eventsCount = 0;
         if (eventsRes.status === 'fulfilled' && eventsRes.value.ok) {
           const eJson = await eventsRes.value.json();
-          eventsCount = Array.isArray(eJson) ? eJson.length : eJson.events ? eJson.events.length : 0;
+          eventsCount = eJson.pagination?.total ?? eJson.events?.length ?? 0;
         }
 
         let newslettersCount = 0;

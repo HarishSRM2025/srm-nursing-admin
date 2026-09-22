@@ -6,6 +6,7 @@ const pageTitles = {
   enquiries: { title: 'Contact Enquiries', path: 'SRM Admin > Contact Enquiries' },
   sliders: { title: 'Home Sliders', path: 'SRM Admin > Home Sliders' },
   news: { title: 'News & Events', path: 'SRM Admin > News & Events' },
+  'events-import': { title: 'Bulk Upload Events', path: 'SRM Admin > News & Events > Bulk Upload' },
   affiliations: { title: 'Affiliations', path: 'SRM Admin > Affiliations' },
   statutes: { title: 'Statutory Disclosure', path: 'SRM Admin > Statutory Disclosure' },
   newsletters: { title: 'Newsletters', path: 'SRM Admin > Newsletters' },

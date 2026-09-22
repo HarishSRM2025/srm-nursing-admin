@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { MdAdd, MdEdit, MdDelete, MdSearch, MdCampaign, MdCloudUpload } from 'react-icons/md';
 import Modal from '../Components/Common/Modal';
+import { Link } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const PAGE_SIZE = 10;
 
 const emptyForm = {
   title: '',
@@ -34,6 +36,7 @@ export default function NewsEvents() {
   const [search, setSearch] = useState('');
   const [catFilter, setCatFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
   const [modal, setModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [form, setForm] = useState(emptyForm);
@@ -42,30 +45,45 @@ export default function NewsEvents() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchEvents = async () => {
+  const [pagination, setPagination] = useState({ page: 1, total: 0, totalPages: 1 });
+  const requestRef = useRef(null);
+  const fetchEvents = useCallback(async () => {
+    requestRef.current?.abort();
+    const controller = new AbortController();
+    requestRef.current = controller;
     setLoading(true);
     setError(null);
+    const params = new URLSearchParams({ page: String(currentPage), limit: String(PAGE_SIZE), search });
+    if (catFilter !== 'All') params.set('category', catFilter);
+    if (statusFilter !== 'All') params.set('status', statusFilter);
     try {
-      const res = await fetch(`${API_URL}/api/events/get-all-events`);
+      const res = await fetch(API_URL + '/api/events/get-all-events?' + params, { signal: controller.signal });
       if (!res.ok) throw new Error('Failed to fetch events from backend');
       const json = await res.json();
+      if (controller.signal.aborted) return;
       setData(json.events || []);
+      setPagination(json.pagination);
     } catch (err) {
-      setError(err.message);
+      if (!controller.signal.aborted) { setError(err.message); setData([]); }
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) setLoading(false);
     }
-  };
+  }, [currentPage, search, catFilter, statusFilter]);
 
   useEffect(() => {
-    fetchEvents();
-  }, []);
+    requestRef.current?.abort();
+    setLoading(true);
+    const timer = setTimeout(() => { fetchEvents(); }, 250);
+    return () => { clearTimeout(timer); requestRef.current?.abort(); };
+  }, [fetchEvents]);
 
-  const filtered = data.filter(d =>
-    (catFilter === 'All' || d.category === catFilter) &&
-    (statusFilter === 'All' || d.status === statusFilter) &&
-    (d.title || '').toLowerCase().includes(search.toLowerCase())
-  );
+  const totalPages = pagination.totalPages;
+  const page = pagination.page;
+  const pageStart = (page - 1) * PAGE_SIZE;
+  const visibleEvents = data;
+  const pages = [...new Set([1, page - 1, page, page + 1, totalPages])]
+    .filter(value => value >= 1 && value <= totalPages).sort((a, b) => a - b)
+    .flatMap((value, index, values) => index && value - values[index - 1] > 1 ? ['gap-' + value, value] : [value]);
 
   const openAdd = () => {
     setEditItem(null);
@@ -243,9 +261,12 @@ export default function NewsEvents() {
           <h2>Events Management</h2>
           <p>Publish college events, workshops, seminars, and cultural programs.</p>
         </div>
-        <button className="btn-primary" onClick={openAdd} disabled={loading}>
-          <MdAdd /> Add Event
-        </button>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <Link className="btn-secondary" to="/news-events/bulk-upload"><MdCloudUpload /> Bulk Upload</Link>
+          <button className="btn-primary" onClick={openAdd} disabled={loading}>
+            <MdAdd /> Add Event
+          </button>
+        </div>
       </div>
 
       <div className="filters-bar">
@@ -255,24 +276,24 @@ export default function NewsEvents() {
             className="search-input"
             placeholder="Search events..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
           />
         </div>
-        <select className="filter-select" value={catFilter} onChange={e => setCatFilter(e.target.value)}>
+        <select className="filter-select" value={catFilter} onChange={e => { setCatFilter(e.target.value); setCurrentPage(1); }}>
           <option value="All">All Categories</option>
           <option value="Events">Events</option>
           <option value="Workshop">Workshop</option>
           <option value="Seminar">Seminar</option>
           <option value="Cultural">Cultural</option>
         </select>
-        <select className="filter-select" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+        <select className="filter-select" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }}>
           <option value="All">All Status</option>
           <option value="Upcoming">Upcoming</option>
           <option value="Ongoing">Ongoing</option>
           <option value="Completed">Completed</option>
           <option value="Cancelled">Cancelled</option>
         </select>
-        <span className="filter-count">{filtered.length} of {data.length} items</span>
+        <span className="filter-count">{pagination.total} matching events</span>
       </div>
 
       {error && (
@@ -297,11 +318,11 @@ export default function NewsEvents() {
               </tr>
             </thead>
             <tbody>
-              {loading && data.length === 0 ? (
+              {loading ? (
                 <tr><td colSpan={8}><div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>Loading events...</div></td></tr>
-              ) : filtered.length === 0 ? (
+              ) : visibleEvents.length === 0 ? (
                 <tr><td colSpan={8}><div className="empty-state"><MdCampaign /><p>No items found.</p></div></td></tr>
-              ) : filtered.map((item, i) => {
+              ) : visibleEvents.map((item, i) => {
                 let imgSource = '';
                 if (item.image && item.image.length > 0) {
                   const normalizedPath = item.image[0].replace(/\\/g, '/');
@@ -309,7 +330,7 @@ export default function NewsEvents() {
                 }
                 return (
                   <tr key={item._id}>
-                    <td style={{ color: 'var(--text-muted)' }}>{i + 1}</td>
+                    <td style={{ color: 'var(--text-muted)' }}>{pageStart + i + 1}</td>
                     <td>
                       <div className="table-img">
                         <img src={imgSource} alt={item.title} onError={e => e.target.style.display = 'none'} />
@@ -345,6 +366,16 @@ export default function NewsEvents() {
             </tbody>
           </table>
         </div>
+        <nav className="table-pagination" aria-label="Events pagination">
+          <span className="pagination-info">Showing {data.length ? pageStart + 1 : 0} to {data.length ? pageStart + data.length : 0} of {pagination.total} entries</span>
+          <div className="pagination-btns">
+            <button className="page-btn" aria-label="Previous page" disabled={loading || page <= 1} onClick={() => setCurrentPage(page - 1)}>&lsaquo;</button>
+            {pages.map(value => typeof value === 'string' ? <span key={value}>...</span> : (
+              <button key={value} className={`page-btn ${page === value ? 'active' : ''}`} aria-current={page === value ? 'page' : undefined} disabled={loading} onClick={() => setCurrentPage(value)}>{value}</button>
+            ))}
+            <button className="page-btn" aria-label="Next page" disabled={loading || page >= totalPages} onClick={() => setCurrentPage(page + 1)}>&rsaquo;</button>
+          </div>
+        </nav>
       </div>
 
       <Modal
