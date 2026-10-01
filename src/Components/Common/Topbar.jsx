@@ -12,6 +12,7 @@ const pageTitles = {
   newsletters: { title: 'Newsletters', path: 'SRM Admin > Newsletters' },
   leadership: { title: 'Leadership', path: 'SRM Admin > Leadership' },
   research: { title: 'Research & Publications', path: 'SRM Admin > Research & Publications' },
+  'faculty-achievements': { title: 'Faculty Achievements', path: 'SRM Admin > Faculty Achievements' },
   achievements: { title: 'Student Achievements', path: 'SRM Admin > Student Achievements' },
 };
 

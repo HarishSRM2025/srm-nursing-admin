@@ -37,7 +37,9 @@ const emptyForm = {
   status: 'active',
 };
 
-export default function Achievements() {
+export default function Achievements({ type = "student" }) {
+  const title = type === "faculty" ? "Faculty" : "Student";
+  const endpoint = `${API_URL}/api/${type}-achievements`;
   const [achievements, setAchievements] = useState([]);
   const [stats, setStats] = useState({ total: 0, active: 0, years: [], categories: [] });
   const [loading, setLoading] = useState(false);
@@ -58,7 +60,7 @@ export default function Achievements() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/achievement`);
+      const res = await fetch(`${endpoint}`);
       if (!res.ok) throw new Error('Failed to fetch achievements');
       const json = await res.json();
       if (json.achievements) {
@@ -95,14 +97,14 @@ export default function Achievements() {
   const handleSave = async e => {
     e.preventDefault();
     if (!form.student_or_batch || !form.award_or_title || !form.year) {
-      alert('Student/Batch, Award Title and Year are required.');
+      alert('Recipient, Award Title and Year are required.');
       return;
     }
     setSaving(true);
     try {
       const url = editItem
-        ? `${API_URL}/api/achievement/${editItem._id}`
-        : `${API_URL}/api/achievement`;
+        ? `${endpoint}/${editItem._id}`
+        : `${endpoint}`;
       const method = editItem ? 'PUT' : 'POST';
       const res = await fetch(url, {
         method,
@@ -122,7 +124,8 @@ export default function Achievements() {
   const handleDelete = async id => {
     setLoading(true);
     try {
-      await fetch(`${API_URL}/api/achievement/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${endpoint}/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete achievement');
       setDeleteConfirm(null);
       await fetchAchievements();
     } catch (err) {
@@ -135,11 +138,12 @@ export default function Achievements() {
   const handleToggleStatus = async item => {
     const newStatus = item.status === 'active' ? 'inactive' : 'active';
     try {
-      await fetch(`${API_URL}/api/achievement/${item._id}`, {
+      const res = await fetch(`${endpoint}/${item._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       });
+      if (!res.ok) throw new Error('Failed to update status');
       await fetchAchievements();
     } catch (err) {
       alert(err.message);
@@ -150,7 +154,7 @@ export default function Achievements() {
     if (!window.confirm('This will reset all achievement records to the original 12 entries. Continue?')) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/achievement/seed`);
+      const res = await fetch(`${endpoint}/seed`);
       if (!res.ok) throw new Error('Seed failed');
       await fetchAchievements();
     } catch (err) {
@@ -167,13 +171,13 @@ export default function Achievements() {
       {/* Header */}
       <div className="page-header">
         <div className="page-header-left">
-          <h2>Student Achievements</h2>
-          <p>Manage student awards, merit certificates, and competition achievements displayed on the website.</p>
+          <h2>{title} Achievements</h2>
+          <p>Manage {title.toLowerCase()} awards, merit certificates, and competition achievements displayed on the website.</p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button className="btn-secondary" onClick={handleSeed} disabled={loading} title="Reset to original 12 records">
+          {type === "student" && <button className="btn-secondary" onClick={handleSeed} disabled={loading} title="Reset to original 12 records">
             <MdRefresh /> Reset / Seed
-          </button>
+          </button>}
           <button className="btn-primary" onClick={openAdd}>
             <MdAdd /> Add Achievement
           </button>
@@ -209,7 +213,7 @@ export default function Achievements() {
           <MdSearch />
           <input
             className="search-input"
-            placeholder="Search by student, award title, or description..."
+            placeholder="Search by recipient, award title, or description..."
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -243,7 +247,7 @@ export default function Achievements() {
             <thead>
               <tr>
                 <th style={{ width: 40 }}>#</th>
-                <th style={{ width: 200 }}>Student / Batch</th>
+                <th style={{ width: 200 }}>{type === "faculty" ? "Faculty Name" : "Student / Batch"}</th>
                 <th>Award / Title</th>
                 <th style={{ width: 260 }}>Description</th>
                 <th style={{ width: 90 }}>Year</th>
@@ -317,7 +321,7 @@ export default function Achievements() {
         open={modal}
         onClose={closeModal}
         title={editItem ? 'Edit Achievement' : 'Add Achievement'}
-        subtitle="Student award, merit certificate or competition achievement"
+        subtitle={`${title} award, merit certificate or competition achievement`}
         icon={<MdEmojiEvents />}
         iconBg="rgba(75,46,131,0.1)"
         iconColor="var(--primary)"
@@ -333,10 +337,10 @@ export default function Achievements() {
       >
         <div className="form-grid">
           <div className="form-group full">
-            <label className="form-label">Student / Batch <span className="required">*</span></label>
+            <label className="form-label">{type === "faculty" ? "Faculty Name" : "Student / Batch"} <span className="required">*</span></label>
             <input
               className="form-input"
-              placeholder="e.g. Ms. Yaalnee (2021-2025)"
+              placeholder={type === "faculty" ? "Faculty member name" : "Student name or batch"}
               value={form.student_or_batch}
               onChange={e => setForm(f => ({ ...f, student_or_batch: e.target.value }))}
             />

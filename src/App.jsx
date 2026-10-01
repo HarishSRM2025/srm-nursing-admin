@@ -30,6 +30,7 @@ const pageMap = {
   '/newsletters': { id: 'newsletters', title: 'Newsletters' },
   '/leadership': { id: 'leadership', title: 'Leadership' },
   '/research': { id: 'research', title: 'Research & Publications' },
+  '/faculty-achievements': { id: 'faculty-achievements', title: 'Faculty Achievements' },
   '/achievements': { id: 'achievements', title: 'Student Achievements' },
 };
 
@@ -70,7 +71,8 @@ function AdminLayout() {
             <Route path="/newsletters" element={<Newsletters />} />
             <Route path="/leadership" element={<Leadership />} />
             <Route path="/research" element={<Research />} />
-            <Route path="/achievements" element={<Achievements />} />
+            <Route path="/faculty-achievements" element={<Achievements key="faculty" type="faculty" />} />
+            <Route path="/achievements" element={<Achievements key="student" />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>

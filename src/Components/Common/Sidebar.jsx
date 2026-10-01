@@ -33,6 +33,7 @@ const navItems = [
       { id: 'leadership', label: 'Leadership', icon: MdGroups, route: '/leadership' },
       { id: 'research', label: 'Research & Publications', icon: MdScience, route: '/research' },
       { id: 'achievements', label: 'Student Achievements', icon: MdEmojiEvents, route: '/achievements' },
+      { id: 'faculty-achievements', label: 'Faculty Achievements', icon: MdEmojiEvents, route: '/faculty-achievements' },
     ]
   }
 ];
