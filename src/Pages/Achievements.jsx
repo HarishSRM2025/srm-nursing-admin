@@ -6,7 +6,7 @@ import {
   MdSearch,
   MdEmojiEvents,
   MdFilterList,
-  MdRefresh,
+  MdCloudUpload,
   MdSchool,
   MdSportsScore,
   MdScience,
@@ -14,6 +14,7 @@ import {
 } from 'react-icons/md';
 import { FaTrophy } from 'react-icons/fa';
 import Modal from '../Components/Common/Modal';
+import AchievementBulkUpload from '../Components/AchievementBulkUpload';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -50,6 +51,7 @@ export default function Achievements({ type = "student" }) {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
 
+  const [uploadOpen, setUploadOpen] = useState(false);
   const [modal, setModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [form, setForm] = useState(emptyForm);
@@ -150,20 +152,6 @@ export default function Achievements({ type = "student" }) {
     }
   };
 
-  const handleSeed = async () => {
-    if (!window.confirm('This will reset all achievement records to the original 12 entries. Continue?')) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`${endpoint}/seed`);
-      if (!res.ok) throw new Error('Seed failed');
-      await fetchAchievements();
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const years = [...new Set(achievements.map(a => a.year))].sort((a, b) => b - a);
 
   return (
@@ -175,14 +163,18 @@ export default function Achievements({ type = "student" }) {
           <p>Manage {title.toLowerCase()} awards, merit certificates, and competition achievements displayed on the website.</p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          {type === "student" && <button className="btn-secondary" onClick={handleSeed} disabled={loading} title="Reset to original 12 records">
-            <MdRefresh /> Reset / Seed
-          </button>}
+          <button className="btn-secondary" onClick={() => setUploadOpen(true)}>
+            <MdCloudUpload /> Bulk Upload
+          </button>
           <button className="btn-primary" onClick={openAdd}>
             <MdAdd /> Add Achievement
           </button>
         </div>
       </div>
+
+      <Modal open={uploadOpen} onClose={() => setUploadOpen(false)} title={`Bulk Upload ${title} Achievements`} size="lg">
+        <AchievementBulkUpload endpoint={endpoint} onImported={fetchAchievements} />
+      </Modal>
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 24 }}>
