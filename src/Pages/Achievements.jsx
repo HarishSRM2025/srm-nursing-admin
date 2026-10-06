@@ -31,6 +31,7 @@ const CATEGORY_COLORS = {
 
 const emptyForm = {
   student_or_batch: '',
+  faculty_name: '',
   award_or_title: '',
   description: '',
   year: new Date().getFullYear(),
@@ -41,6 +42,7 @@ const emptyForm = {
 
 export default function Achievements({ type = "student" }) {
   const title = type === "faculty" ? "Faculty" : "Student";
+  const recipientField = type === 'faculty' ? 'faculty_name' : 'student_or_batch';
   const endpoint = `${API_URL}/api/${type}-achievements`;
   const [achievements, setAchievements] = useState([]);
   const [stats, setStats] = useState({ total: 0, active: 0, years: [], categories: [] });
@@ -86,7 +88,7 @@ export default function Achievements({ type = "student" }) {
       const matchCat = categoryFilter === 'All' || a.category === categoryFilter;
       const q = search.toLowerCase();
       const matchSearch = !q ||
-        a.student_or_batch?.toLowerCase().includes(q) ||
+        a[recipientField]?.toLowerCase().includes(q) ||
         a.award_or_title?.toLowerCase().includes(q) ||
         a.description?.toLowerCase().includes(q);
       return matchStatus && matchYear && matchCat && matchSearch;
@@ -99,7 +101,7 @@ export default function Achievements({ type = "student" }) {
 
   const handleSave = async e => {
     e.preventDefault();
-    if (!form.student_or_batch || !form.award_or_title || !form.year) {
+    if (!form[recipientField] || !form.award_or_title || !form.year) {
       alert('Recipient, Award Title and Year are required.');
       return;
     }
@@ -268,7 +270,7 @@ export default function Achievements({ type = "student" }) {
                   <tr key={a._id}>
                     <td style={{ color: 'var(--text-muted)', fontWeight: 500 }}>{a.sno || i + 1}</td>
                     <td>
-                      <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>{a.student_or_batch}</span>
+                      <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>{a[recipientField]}</span>
                     </td>
                     <td>
                       <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.4 }}>{a.award_or_title}</span>
@@ -335,8 +337,8 @@ export default function Achievements({ type = "student" }) {
             <input
               className="form-input"
               placeholder={type === "faculty" ? "Faculty member name" : "Student name or batch"}
-              value={form.student_or_batch}
-              onChange={e => setForm(f => ({ ...f, student_or_batch: e.target.value }))}
+              value={form[recipientField]}
+              onChange={e => setForm(f => ({ ...f, [recipientField]: e.target.value }))}
             />
           </div>
           <div className="form-group full">

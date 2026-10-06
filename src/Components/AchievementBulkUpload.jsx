@@ -41,8 +41,8 @@ export default function AchievementBulkUpload({ endpoint, onImported, type = 'st
   return (
     <div>
       <p>Upload up to 500 {type} achievements from the first Excel sheet. Each upload adds new records.</p>
-      <a className="btn-secondary" href={`${endpoint}/template`} download>Download Blank Excel Template</a>
-      <p>Required: student_or_batch ({type === 'faculty' ? 'faculty name' : 'student name or batch'}), award_or_title, year (1900–9999).</p>
+      <a className="btn-secondary" href={`${endpoint}/template`} download>Download Blank {type === 'faculty' ? 'Faculty' : 'Student'} Template</a>
+      <p>Required: {type === 'faculty' ? 'faculty_name' : 'student_or_batch'} ({type === 'faculty' ? 'faculty name' : 'student name or batch'}), award_or_title, year (1900–9999).</p>
       <p>Optional: description, category, status, institution. Category defaults to General; status defaults to active.</p>
       <p>Categories: Academic, Sports, Cultural, Research, Community, General. Status: active or inactive.</p>
       <form onSubmit={upload} aria-busy={uploading}>
