@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-export default function AchievementBulkUpload({ endpoint, onImported }) {
+export default function AchievementBulkUpload({ endpoint, onImported, type = 'student' }) {
   const input = useRef(null);
   const busy = useRef(false);
   const [uploading, setUploading] = useState(false);
@@ -40,9 +40,9 @@ export default function AchievementBulkUpload({ endpoint, onImported }) {
 
   return (
     <div>
-      <p>Upload up to 500 achievements from the first Excel sheet. Each upload adds new records.</p>
+      <p>Upload up to 500 {type} achievements from the first Excel sheet. Each upload adds new records.</p>
       <a className="btn-secondary" href={`${endpoint}/template`} download>Download Blank Excel Template</a>
-      <p>Required: student_or_batch (recipient or faculty name), award_or_title, year (1900–9999).</p>
+      <p>Required: student_or_batch ({type === 'faculty' ? 'faculty name' : 'student name or batch'}), award_or_title, year (1900–9999).</p>
       <p>Optional: description, category, status, institution. Category defaults to General; status defaults to active.</p>
       <p>Categories: Academic, Sports, Cultural, Research, Community, General. Status: active or inactive.</p>
       <form onSubmit={upload} aria-busy={uploading}>

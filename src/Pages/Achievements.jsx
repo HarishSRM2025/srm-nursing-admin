@@ -36,6 +36,7 @@ const emptyForm = {
   year: new Date().getFullYear(),
   category: 'Academic',
   status: 'active',
+  institution: 'SRM TRICHY COLLEGE OF NURSING',
 };
 
 export default function Achievements({ type = "student" }) {
@@ -113,7 +114,8 @@ export default function Achievements({ type = "student" }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error('Failed to save');
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || 'Failed to save');
       closeModal();
       await fetchAchievements();
     } catch (err) {
@@ -167,13 +169,13 @@ export default function Achievements({ type = "student" }) {
             <MdCloudUpload /> Bulk Upload
           </button>
           <button className="btn-primary" onClick={openAdd}>
-            <MdAdd /> Add Achievement
+            <MdAdd /> Add {title} Achievement
           </button>
         </div>
       </div>
 
       <Modal open={uploadOpen} onClose={() => setUploadOpen(false)} title={`Bulk Upload ${title} Achievements`} size="lg">
-        <AchievementBulkUpload endpoint={endpoint} onImported={fetchAchievements} />
+        <AchievementBulkUpload type={type} endpoint={endpoint} onImported={fetchAchievements} />
       </Modal>
 
       {/* Stats */}
@@ -312,7 +314,7 @@ export default function Achievements({ type = "student" }) {
       <Modal
         open={modal}
         onClose={closeModal}
-        title={editItem ? 'Edit Achievement' : 'Add Achievement'}
+        title={`${editItem ? 'Edit' : 'Add'} ${title} Achievement`}
         subtitle={`${title} award, merit certificate or competition achievement`}
         icon={<MdEmojiEvents />}
         iconBg="rgba(75,46,131,0.1)"
@@ -362,8 +364,8 @@ export default function Achievements({ type = "student" }) {
             <input
               className="form-input"
               type="number"
-              min="2000"
-              max="2100"
+              min="1900"
+              max="9999"
               value={form.year}
               onChange={e => setForm(f => ({ ...f, year: e.target.value }))}
             />
@@ -373,6 +375,11 @@ export default function Achievements({ type = "student" }) {
             <select className="form-select" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
+          </div>
+          <div className="form-group full">
+            <label className="form-label">Institution</label>
+            <input className="form-input" value={form.institution || ''}
+              onChange={e => setForm(f => ({ ...f, institution: e.target.value }))} />
           </div>
           <div className="form-group">
             <label className="form-label">Status</label>

@@ -24,21 +24,23 @@ export default function Dashboard() {
     newsletters: '...',
     leadership: '...',
     publications: '...',
-    achievements: '...'
+    achievements: '...',
+    facultyAchievements: '...'
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAllCounts = async () => {
       try {
-        const [contactRes, slidersRes, eventsRes, newslettersRes, leadershipRes, pubsRes, achieveRes] = await Promise.allSettled([
+        const [contactRes, slidersRes, eventsRes, newslettersRes, leadershipRes, pubsRes, achieveRes, facultyAchieveRes] = await Promise.allSettled([
           fetch(`${API_URL}/api/contact`),
           fetch(`${API_URL}/api/slider/get-slider`),
           fetch(`${API_URL}/api/events/get-all-events?limit=1`),
           fetch(`${API_URL}/api/newsletter`),
           fetch(`${API_URL}/api/leadership/get`),
           fetch(`${API_URL}/api/publication`),
-          fetch(`${API_URL}/api/achievement`)
+          fetch(`${API_URL}/api/student-achievements?limit=1`),
+          fetch(`${API_URL}/api/faculty-achievements?limit=1`)
         ]);
 
         let contactCount = 0;
@@ -83,6 +85,12 @@ export default function Dashboard() {
           achievementsCount = aJson.total !== undefined ? aJson.total : (Array.isArray(aJson.achievements) ? aJson.achievements.length : 0);
         }
 
+        let facultyAchievementsCount = '?';
+        if (facultyAchieveRes.status === 'fulfilled' && facultyAchieveRes.value.ok) {
+          const json = await facultyAchieveRes.value.json();
+          facultyAchievementsCount = json.total ?? 0;
+        }
+
         setCounts({
           enquiries: contactCount,
           sliders: slidersCount,
@@ -90,7 +98,8 @@ export default function Dashboard() {
           newsletters: newslettersCount,
           leadership: leadershipCount,
           publications: pubsCount,
-          achievements: achievementsCount
+          achievements: achievementsCount,
+          facultyAchievements: facultyAchievementsCount
         });
       } catch (err) {
         console.error('Error fetching dashboard counts:', err);
@@ -172,6 +181,16 @@ export default function Dashboard() {
       badgeBg: '#d1fae5',
       badgeColor: '#059669',
       desc: 'Student awards, merit certificates, and competition achievements'
+    },
+    {
+      title: 'Faculty Achievements',
+      count: counts.facultyAchievements,
+      route: '/faculty-achievements',
+      icon: MdEmojiEvents,
+      color: 'purple',
+      badgeBg: '#ede9fe',
+      badgeColor: '#7c3aed',
+      desc: 'Faculty awards, recognitions, and professional achievements'
     }
   ];
 
