@@ -8,22 +8,19 @@ import {
   MdRefresh,
   MdCheckCircle,
   MdCalendarToday,
-  MdPerson,
-  MdSchool,
-  MdFilterList
 } from 'react-icons/md';
 import Modal from '../Components/Common/Modal';
+import ResearchBulkUpload from '../Components/ResearchBulkUpload';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const emptyForm = {
-  faculty_name: '',
   title: '',
   description: '',
   year: new Date().getFullYear(),
   status: 'active',
   institution: 'SRM TRICHY COLLEGE OF NURSING',
-  document_title: 'FACULTY PUBLICATIONS & CERTIFICATIONS'
+  document_title: 'RESEARCH PUBLICATIONS & CERTIFICATIONS'
 };
 
 const ITEMS_PER_PAGE = 10;
@@ -33,7 +30,7 @@ export default function Research() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [yearFilter, setYearFilter] = useState('All');
-  const [facultyFilter, setFacultyFilter] = useState('All');
+  const [bulkModal, setBulkModal] = useState(false);
   const [modal, setModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [form, setForm] = useState(emptyForm);
@@ -76,33 +73,27 @@ export default function Research() {
     fetchPublications();
   }, []);
 
-  // Compute unique years and faculty names for filters
+  // Compute unique years for filters
   const uniqueYears = useMemo(() => {
     const set = new Set(data.map(d => d.year).filter(Boolean));
     return Array.from(set).sort((a, b) => b - a);
   }, [data]);
 
-  const uniqueFaculty = useMemo(() => {
-    const set = new Set(data.map(d => d.faculty_name).filter(Boolean));
-    return Array.from(set).sort();
-  }, [data]);
 
   // Filtered data
   const filtered = useMemo(() => {
     return data.filter(d => {
       const matchStatus = statusFilter === 'All' || d.status === statusFilter;
       const matchYear = yearFilter === 'All' || String(d.year) === String(yearFilter);
-      const matchFaculty = facultyFilter === 'All' || d.faculty_name === facultyFilter;
       const q = search.toLowerCase().trim();
       const matchSearch =
         !q ||
         (d.title && d.title.toLowerCase().includes(q)) ||
-        (d.faculty_name && d.faculty_name.toLowerCase().includes(q)) ||
         (d.description && d.description.toLowerCase().includes(q));
 
-      return matchStatus && matchYear && matchFaculty && matchSearch;
+      return matchStatus && matchYear && matchSearch;
     });
-  }, [data, search, statusFilter, yearFilter, facultyFilter]);
+  }, [data, search, statusFilter, yearFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
@@ -126,13 +117,12 @@ export default function Research() {
   const openEdit = (item) => {
     setEditItem(item);
     setForm({
-      faculty_name: item.faculty_name || '',
       title: item.title || '',
       description: item.description || '',
       year: item.year || new Date().getFullYear(),
       status: item.status || 'active',
       institution: item.institution || 'SRM TRICHY COLLEGE OF NURSING',
-      document_title: item.document_title || 'FACULTY PUBLICATIONS & CERTIFICATIONS'
+      document_title: item.document_title || 'RESEARCH PUBLICATIONS & CERTIFICATIONS'
     });
     setModal(true);
   };
@@ -144,10 +134,6 @@ export default function Research() {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!form.faculty_name.trim()) {
-      alert('Faculty name is required');
-      return;
-    }
     if (!form.title.trim()) {
       alert('Title is required');
       return;
@@ -239,7 +225,7 @@ export default function Research() {
   };
 
   const handleSeedDefaults = async () => {
-    if (!window.confirm('Reset/Seed all 44 default faculty publications? This will refresh all standard entries.')) {
+    if (!window.confirm('Reset/Seed all default research publications? This will refresh all standard entries.')) {
       return;
     }
     setLoading(true);
@@ -251,7 +237,7 @@ export default function Research() {
         throw new Error('Failed to seed publications');
       }
       await fetchPublications();
-      alert('Successfully seeded 44 faculty publications!');
+      alert('Successfully seeded default research publications!');
     } catch (err) {
       alert(err.message);
     } finally {
@@ -264,10 +250,11 @@ export default function Research() {
       {/* Header */}
       <div className="page-header">
         <div className="page-header-left">
-          <h2>Faculty Publications & Certifications</h2>
-          <p>Manage faculty research papers, journals, certifications, and awards.</p>
+          <h2>Research Publications & Certifications</h2>
+          <p>Manage research papers, journals, certifications, and awards.</p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
+          <button className="btn-secondary" onClick={() => setBulkModal(true)}>Bulk Upload</button>
           <button className="btn-secondary" onClick={handleSeedDefaults} disabled={loading} title="Re-populate default records">
             <MdRefresh /> Reset / Seed
           </button>
@@ -362,11 +349,11 @@ export default function Research() {
             justifyContent: 'center',
             fontSize: 22
           }}>
-            <MdPerson />
+            <MdScience />
           </div>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>{uniqueFaculty.length}</div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>Faculty Members</div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>{data.filter(d => d.status === 'inactive').length}</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>Inactive Publications</div>
           </div>
         </div>
 
@@ -405,7 +392,7 @@ export default function Research() {
           <MdSearch />
           <input
             className="search-input"
-            placeholder="Search by title, faculty, or keywords..."
+            placeholder="Search by title or keywords..."
             value={search}
             onChange={e => {
               setSearch(e.target.value);
@@ -414,19 +401,6 @@ export default function Research() {
           />
         </div>
 
-        <select
-          className="filter-select"
-          value={facultyFilter}
-          onChange={e => {
-            setFacultyFilter(e.target.value);
-            setCurrentPage(1);
-          }}
-        >
-          <option value="All">All Faculty</option>
-          {uniqueFaculty.map(f => (
-            <option key={f} value={f}>{f}</option>
-          ))}
-        </select>
 
         <select
           className="filter-select"
@@ -473,7 +447,6 @@ export default function Research() {
             <thead>
               <tr>
                 <th style={{ width: 60 }}>#</th>
-                <th style={{ width: 180 }}>Faculty</th>
                 <th>Publication / Certification Title</th>
                 <th style={{ width: 90 }}>Year</th>
                 <th style={{ width: 100 }}>Status</th>
@@ -483,13 +456,13 @@ export default function Research() {
             <tbody>
               {loading && data.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '30px' }}>
+                  <td colSpan={5} style={{ textAlign: 'center', padding: '30px' }}>
                     <div style={{ color: 'var(--text-secondary)' }}>Loading publications...</div>
                   </td>
                 </tr>
               ) : paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={6}>
+                  <td colSpan={5}>
                     <div className="empty-state">
                       <MdScience />
                       <p>No publications found matching your filter criteria.</p>
@@ -502,30 +475,6 @@ export default function Research() {
                   return (
                     <tr key={item._id || itemIndex}>
                       <td style={{ color: 'var(--text-muted)', fontWeight: 500 }}>{itemIndex}</td>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <div style={{
-                            width: 32,
-                            height: 32,
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 12,
-                            fontWeight: 700,
-                            flexShrink: 0
-                          }}>
-                            {item.faculty_name ? item.faculty_name.charAt(0) : 'F'}
-                          </div>
-                          <div>
-                            <span className="cell-primary" style={{ fontSize: 13, fontWeight: 600 }}>
-                              {item.faculty_name}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
                       <td>
                         <div>
                           <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4, lineHeight: 1.35 }}>
@@ -624,12 +573,16 @@ export default function Research() {
         </div>
       </div>
 
+      <Modal open={bulkModal} onClose={() => setBulkModal(false)} title="Bulk Upload Research" size="lg">
+        <ResearchBulkUpload endpoint={API_URL + "/api/publication"} onImported={fetchPublications} />
+      </Modal>
+
       {/* Add / Edit Modal */}
       <Modal
         open={modal}
         onClose={closeModal}
         title={editItem ? 'Edit Publication' : 'Add New Publication'}
-        subtitle="Manage faculty research papers, journals, and certifications"
+        subtitle="Manage research papers, journals, and certifications"
         icon={<MdScience />}
         iconBg="rgba(75, 46, 131, 0.1)"
         iconColor="var(--primary)"
@@ -646,16 +599,6 @@ export default function Research() {
         }
       >
         <div className="form-grid cols-2">
-          <div className="form-group">
-            <label className="form-label">Faculty Name <span className="required">*</span></label>
-            <input
-              className="form-input"
-              placeholder="e.g. Dr. Suja Suresh"
-              value={form.faculty_name}
-              onChange={e => setForm({ ...form, faculty_name: e.target.value })}
-              disabled={loading}
-            />
-          </div>
 
           <div className="form-group">
             <label className="form-label">Publication Year <span className="required">*</span></label>
@@ -663,8 +606,8 @@ export default function Research() {
               type="number"
               className="form-input"
               placeholder="e.g. 2026"
-              min="2000"
-              max="2035"
+              min="1900"
+              max="9999"
               value={form.year}
               onChange={e => setForm({ ...form, year: Number(e.target.value) })}
               disabled={loading}
