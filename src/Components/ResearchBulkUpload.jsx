@@ -43,7 +43,7 @@ export default function ResearchBulkUpload({ endpoint, onImported }) {
       <p>Upload up to 500 research records from the first Excel sheet. Each upload adds new records.</p>
       <a className="btn-secondary" href={`${endpoint}/template`} download>Download Blank Template</a>
       <p>Required: title, year (1900-9999).</p>
-      <p>Optional: description, status, institution, document_title. Status defaults to active.</p>
+      <p>Optional: researcher_name, description, status, institution, document_title. Status defaults to active.</p>
       <p>Status: active or inactive.</p>
       <form onSubmit={upload} aria-busy={uploading}>
         <label className="form-label" htmlFor="research-workbook">Excel file (maximum 10 MB)</label>

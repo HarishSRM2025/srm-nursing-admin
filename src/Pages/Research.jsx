@@ -15,6 +15,7 @@ import ResearchBulkUpload from '../Components/ResearchBulkUpload';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const emptyForm = {
+  researcher_name: '',
   title: '',
   description: '',
   year: new Date().getFullYear(),
@@ -88,6 +89,7 @@ export default function Research() {
       const q = search.toLowerCase().trim();
       const matchSearch =
         !q ||
+        (d.researcher_name && d.researcher_name.toLowerCase().includes(q)) ||
         (d.title && d.title.toLowerCase().includes(q)) ||
         (d.description && d.description.toLowerCase().includes(q));
 
@@ -117,6 +119,7 @@ export default function Research() {
   const openEdit = (item) => {
     setEditItem(item);
     setForm({
+      researcher_name: item.researcher_name || '',
       title: item.title || '',
       description: item.description || '',
       year: item.year || new Date().getFullYear(),
@@ -392,7 +395,7 @@ export default function Research() {
           <MdSearch />
           <input
             className="search-input"
-            placeholder="Search by title or keywords..."
+            placeholder="Search by title, researcher, or keywords..."
             value={search}
             onChange={e => {
               setSearch(e.target.value);
@@ -480,6 +483,7 @@ export default function Research() {
                           <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4, lineHeight: 1.35 }}>
                             {item.title}
                           </div>
+                          {item.researcher_name && <div className="cell-secondary">{item.researcher_name}</div>}
                           {item.description && (
                             <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>
                               {item.description}
@@ -599,6 +603,10 @@ export default function Research() {
         }
       >
         <div className="form-grid cols-2">
+          <div className="form-group">
+            <label className="form-label">Researcher Name</label>
+            <input className="form-input" placeholder="Enter researcher name" value={form.researcher_name} onChange={e => setForm({ ...form, researcher_name: e.target.value })} disabled={loading} />
+          </div>
 
           <div className="form-group">
             <label className="form-label">Publication Year <span className="required">*</span></label>
