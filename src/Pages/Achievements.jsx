@@ -18,6 +18,8 @@ import AchievementBulkUpload from '../Components/AchievementBulkUpload';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+const ITEMS_PER_PAGE = 10;
+
 const CATEGORIES = ['Academic', 'Sports', 'Cultural', 'Research', 'Community', 'General'];
 
 const CATEGORY_COLORS = {
@@ -49,6 +51,7 @@ export default function Achievements({ type = "student" }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [requestedPage, setRequestedPage] = useState(1);
   const [search, setSearch] = useState('');
   const [yearFilter, setYearFilter] = useState('All');
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -93,7 +96,15 @@ export default function Achievements({ type = "student" }) {
         a.description?.toLowerCase().includes(q);
       return matchStatus && matchYear && matchCat && matchSearch;
     });
-  }, [achievements, search, yearFilter, categoryFilter, statusFilter]);
+  }, [achievements, search, yearFilter, categoryFilter, statusFilter, recipientField]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const currentPage = Math.min(requestedPage, totalPages);
+  const pageStart = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginated = filtered.slice(pageStart, pageStart + ITEMS_PER_PAGE);
+  const pageNumbers = [...new Set([1, currentPage - 1, currentPage, currentPage + 1, totalPages])]
+    .filter(page => page >= 1 && page <= totalPages)
+    .sort((a, b) => a - b);
 
   const openAdd = () => { setEditItem(null); setForm(emptyForm); setModal(true); };
   const openEdit = item => { setEditItem(item); setForm({ ...item }); setModal(true); };
@@ -211,18 +222,18 @@ export default function Achievements({ type = "student" }) {
             className="search-input"
             placeholder="Search by recipient, award title, or description..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => { setSearch(e.target.value); setRequestedPage(1); }}
           />
         </div>
-        <select className="filter-select" value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}>
+        <select className="filter-select" value={categoryFilter} onChange={e => { setCategoryFilter(e.target.value); setRequestedPage(1); }}>
           <option value="All">All Categories</option>
           {CATEGORIES.map(c => <option key={c}>{c}</option>)}
         </select>
-        <select className="filter-select" value={yearFilter} onChange={e => setYearFilter(e.target.value)}>
+        <select className="filter-select" value={yearFilter} onChange={e => { setYearFilter(e.target.value); setRequestedPage(1); }}>
           <option value="All">All Years</option>
           {years.map(y => <option key={y} value={y}>{y}</option>)}
         </select>
-        <select className="filter-select" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+        <select className="filter-select" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setRequestedPage(1); }}>
           <option value="All">All Status</option>
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
@@ -264,11 +275,11 @@ export default function Achievements({ type = "student" }) {
                     </div>
                   </td>
                 </tr>
-              ) : filtered.map((a, i) => {
+              ) : paginated.map((a, i) => {
                 const cat = CATEGORY_COLORS[a.category] || CATEGORY_COLORS.General;
                 return (
                   <tr key={a._id}>
-                    <td style={{ color: 'var(--text-muted)', fontWeight: 500 }}>{a.sno || i + 1}</td>
+                    <td style={{ color: 'var(--text-muted)', fontWeight: 500 }}>{a.sno || pageStart + i + 1}</td>
                     <td>
                       <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>{a[recipientField]}</span>
                     </td>
@@ -310,6 +321,25 @@ export default function Achievements({ type = "student" }) {
             </tbody>
           </table>
         </div>
+        <nav className="table-pagination" aria-label={`${title} achievements pagination`} style={{ flexWrap: 'wrap', gap: 12 }}>
+          <span className="pagination-info" aria-live="polite">
+            Showing {filtered.length ? pageStart + 1 : 0} to {Math.min(pageStart + ITEMS_PER_PAGE, filtered.length)} of {filtered.length} entries
+          </span>
+          <div className="pagination-btns">
+            <button type="button" className="page-btn" aria-label="Previous page" disabled={loading || currentPage === 1}
+              onClick={() => setRequestedPage(currentPage - 1)}>&lsaquo;</button>
+            {pageNumbers.map((page, index) => (
+              <React.Fragment key={page}>
+                {index > 0 && page - pageNumbers[index - 1] > 1 && <span aria-hidden="true">...</span>}
+                <button type="button" className={`page-btn ${currentPage === page ? 'active' : ''}`}
+                  aria-label={`Page ${page}`} aria-current={currentPage === page ? 'page' : undefined}
+                  disabled={loading} onClick={() => setRequestedPage(page)}>{page}</button>
+              </React.Fragment>
+            ))}
+            <button type="button" className="page-btn" aria-label="Next page" disabled={loading || currentPage === totalPages}
+              onClick={() => setRequestedPage(currentPage + 1)}>&rsaquo;</button>
+          </div>
+        </nav>
       </div>
 
       {/* Add / Edit Modal */}
