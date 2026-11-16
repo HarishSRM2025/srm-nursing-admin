@@ -8,6 +8,8 @@ const pageTitles = {
   news: { title: 'News & Events', path: 'SRM Admin > News & Events' },
   'events-import': { title: 'Bulk Upload Events', path: 'SRM Admin > News & Events > Bulk Upload' },
   departments: { title: 'Academic Departments', path: 'SRM Admin > Academic Departments' },
+  'code-of-conduct': { title: 'Code of Conduct', path: 'SRM Admin > Code of Conduct' },
+  placements: { title: 'Placements', path: 'SRM Admin > Placements' },
   courses: { title: 'Courses Offered', path: 'SRM Admin > Academics > Courses' },
   clubs: { title: 'Clubs & Committees', path: 'SRM Admin > Clubs & Committees' },
   'green-campus': { title: 'Green Campus', path: 'SRM Admin > Green Campus' },

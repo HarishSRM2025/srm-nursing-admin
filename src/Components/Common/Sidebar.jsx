@@ -34,6 +34,8 @@ const navItems = [
     section: 'INSTITUTION & ACADEMICS',
     items: [
       { id: 'departments', label: 'Departments', icon: MdApartment, route: '/departments' },
+      { id: 'code-of-conduct', label: 'Code of Conduct', icon: MdGroups, route: '/code-of-conduct' },
+      { id: 'placements', label: 'Placements', icon: MdSchool, route: '/placements' },
       { id: 'courses', label: 'Courses Offered', icon: MdSchool, route: '/courses' },
       { id: 'clubs', label: 'Clubs & Committees', icon: MdDiversity3, route: '/clubs' },
       { id: 'green-campus', label: 'Green Campus', icon: MdEco, route: '/green-campus' },

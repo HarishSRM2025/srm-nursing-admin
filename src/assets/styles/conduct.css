@@ -1,0 +1,10 @@
+.conduct-editor fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.conduct-editor label { display: flex; flex-direction: column; gap: 6px; margin: 14px 0; flex: 1; }
+.conduct-editor input, .conduct-editor textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; }
+.conduct-editor textarea { min-height: 90px; resize: vertical; }
+.conduct-actions, .conduct-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+.conduct-card { padding: 20px; margin: 16px 0; background: white; border: 1px solid #e2e8f0; border-radius: 12px; }
+.conduct-list { padding: 12px; margin: 12px 0; border-left: 3px solid #cbd5e1; }
+.conduct-editor button:disabled { opacity: .6; cursor: not-allowed; }
+.conduct-editor h3 { margin: 20px 0 12px; }
+@media (max-width: 600px) { .conduct-row { display: block; } }

@@ -20,6 +20,8 @@ import Departments from './Pages/Departments';
 import Clubs from './Pages/Clubs';
 import Facilities from './Pages/Facilities';
 import Courses from './Pages/Courses';
+import Placements from './Pages/Placements';
+import CodeOfConduct from './Pages/CodeOfConduct';
 import Sidebar from './Components/Common/Sidebar';
 import Topbar from './Components/Common/Topbar';
 import './assets/styles/main.css';
@@ -35,6 +37,8 @@ const pageMap = {
   '/statutes': { id: 'statutes', title: 'Statutory Disclosure' },
   '/newsletters': { id: 'newsletters', title: 'Newsletters' },
   '/departments': { id: 'departments', title: 'Academic Departments' },
+  '/code-of-conduct': { id: 'code-of-conduct', title: 'Code of Conduct' },
+  '/placements': { id: 'placements', title: 'Placements' },
   '/courses': { id: 'courses', title: 'Courses Offered' },
   '/clubs': { id: 'clubs', title: 'Clubs & Committees' },
   '/green-campus': { id: 'green-campus', title: 'Green Campus' },
@@ -81,6 +85,8 @@ function AdminLayout() {
             <Route path="/statutes" element={<Statutes />} />
             <Route path="/newsletters" element={<Newsletters />} />
             <Route path="/departments" element={<Departments />} />
+            <Route path="/code-of-conduct" element={<CodeOfConduct />} />
+            <Route path="/placements" element={<Placements />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/clubs" element={<Clubs />} />
             <Route path="/green-campus" element={<GreenCampus />} />
