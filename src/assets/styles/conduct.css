@@ -8,3 +8,55 @@
 .conduct-editor button:disabled { opacity: .6; cursor: not-allowed; }
 .conduct-editor h3 { margin: 20px 0 12px; }
 @media (max-width: 600px) { .conduct-row { display: block; } }
+
+.conduct-editor { color: #1e293b; max-width: 1440px; margin: 0 auto; padding-bottom: 24px; }
+.conduct-page-heading { display: flex; gap: 18px; align-items: center; margin: 4px 0 28px; }
+.conduct-page-icon { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 16px; background: #ede9fe; color: #5b21b6; font-size: 30px; flex-shrink: 0; }
+.conduct-eyebrow { color: #6d28d9; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; }
+.conduct-page-heading h2, .conduct-section-heading h2 { margin: 5px 0 8px; font-size: 25px; color: #1e293b; }
+.conduct-page-heading p, .conduct-section-heading p { color: #475569; line-height: 1.6; margin: 0; }
+.conduct-workspace { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; align-items: start; }
+.conduct-section-nav { position: sticky; top: 12px; background: #fff; padding: 18px 12px; border: 1px solid #dbe2ec; border-radius: 14px; }
+.conduct-section-nav h3 { display: flex; justify-content: space-between; margin: 0 10px 8px; font-size: 16px; }
+.conduct-section-nav h3 span { color: #64748b; }
+.conduct-section-nav p { font-size: 12px; color: #475569; margin: 0 10px 16px; line-height: 1.6; }
+.conduct-section-nav button { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; border: 1px solid transparent; border-radius: 8px; padding: 12px 10px; margin: 3px 0; background: white; color: #334155; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.conduct-section-nav button:hover:not(:disabled) { background: #f5f3ff; }
+.conduct-section-nav button[aria-current="page"] { background: #ede9fe; border-color: #c4b5fd; color: #4c1d95; }
+.conduct-nav-number { color: #64748b; font-variant-numeric: tabular-nums; font-size: 11px; }
+.conduct-section-nav .conduct-nav-hint { margin-top: 16px; padding: 10px; background: #fffbeb; color: #92400e; border-radius: 8px; }
+.conduct-form { min-width: 0; background: #fff; padding: 26px; border: 1px solid #dbe2ec; border-radius: 14px; box-shadow: 0 4px 18px #0f172a05; }
+.conduct-section-heading { border-bottom: 1px solid #e2e8f0; padding-bottom: 22px; margin-bottom: 22px; }
+.conduct-editor label { font-size: 13px; font-weight: 650; color: #334155; }
+.conduct-editor input, .conduct-editor textarea, .conduct-editor select { background: #fff; color: #172033; font-size: 14px; font-weight: 400; line-height: 1.7; border-color: #94a3b8; }
+.conduct-editor textarea { min-height: 100px; }
+.conduct-editor :is(input, textarea, select, button, summary):focus-visible { outline: 3px solid #a78bfa; outline-offset: 3px; }
+.conduct-rule-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 28px; }
+.conduct-rule-heading h3 { margin: 0 0 8px; font-size: 18px; }
+.conduct-rule-heading p { font-size: 12px; color: #475569; line-height: 1.6; margin: 0; }
+.conduct-count { display: inline-block; padding: 2px 8px; border-radius: 20px; background: #ede9fe; color: #5b21b6; font-size: 12px; font-weight: 700; vertical-align: middle; }
+.conduct-rule-card { padding: 0; overflow: hidden; border-color: #cbd5e1; }
+.conduct-rule-top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+.conduct-rule-number { display: grid; place-items: center; height: 34px; min-width: 34px; border-radius: 8px; background: #5b21b6; color: white; font-weight: 800; font-variant-numeric: tabular-nums; }
+.conduct-rule-top strong { font-size: 14px; }
+.conduct-rule-tools { margin-left: auto; display: flex; gap: 7px; align-items: center; }
+.conduct-icon-button { display: inline-grid; place-items: center; min-width: 34px; height: 34px; border: 1px solid #cbd5e1; border-radius: 6px; background: white; color: #334155; cursor: pointer; font-size: 18px; }
+.conduct-icon-button:hover:not(:disabled) { background: #ede9fe; color: #5b21b6; }
+.conduct-icon-button.conduct-delete { color: #b91c1c; }
+.conduct-editor .conduct-position { flex-direction: row; align-items: center; gap: 7px; margin: 0 6px; font-size: 11px; }
+.conduct-position select { width: 58px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 6px; }
+.conduct-editor .conduct-rule-text { margin: 16px; }
+.conduct-details { border-top: 1px solid #e2e8f0; background: #fafaff; padding: 12px 16px; }
+.conduct-details summary { cursor: pointer; color: #5b21b6; font-size: 13px; font-weight: 700; padding: 4px 0; }
+.conduct-list { background: #f5f3ff; border-left-color: #a78bfa; border-radius: 0 8px 8px 0; }
+.conduct-list h4 { font-size: 13px; }
+.conduct-add-rule { display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; padding: 14px; border: 1px dashed #8b5cf6; background: #faf5ff; color: #5b21b6; font: inherit; font-weight: 700; border-radius: 10px; cursor: pointer; }
+.conduct-empty { padding: 24px; text-align: center; border: 1px dashed #cbd5e1; border-radius: 10px; margin: 16px 0; color: #475569; }
+.conduct-savebar { position: sticky; bottom: 0; z-index: 5; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding: 16px 0 8px; margin-top: 28px; background: #fff; border-top: 1px solid #cbd5e1; box-shadow: 0 -8px 16px #ffffffeb; }
+.conduct-state { margin-right: auto; font-size: 12px; font-weight: 700; color: #166534; }
+.conduct-state--dirty { color: #92400e; }
+.conduct-notice { padding: 14px 18px; border: 1px solid; border-radius: 10px; margin-bottom: 18px; }
+.conduct-notice--error { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+.conduct-notice--success { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+@media (max-width: 1150px) { .conduct-workspace { grid-template-columns: 1fr; } .conduct-section-nav { position: static; display: flex; flex-wrap: wrap; gap: 4px; } .conduct-section-nav h3, .conduct-section-nav p { width: 100%; } .conduct-section-nav button { width: auto; } }
+@media (max-width: 700px) { .conduct-form { padding: 14px; } .conduct-page-icon { display: none; } .conduct-rule-top, .conduct-rule-heading { flex-wrap: wrap; } .conduct-rule-tools { width: 100%; margin-left: 0; } .conduct-savebar .conduct-state { width: 100%; } }
