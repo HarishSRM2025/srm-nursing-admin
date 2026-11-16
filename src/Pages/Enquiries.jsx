@@ -63,7 +63,7 @@ export default function Enquiries() {
   // Fetch departments
   const fetchDepartments = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/department`);
+      const res = await fetch(`${API_URL}/api/enquiry-departments`);
       if (res.ok) {
         const json = await res.json();
         if (json && json.departments) {
@@ -178,14 +178,21 @@ export default function Enquiries() {
     }
     setLoading(true);
     try {
-      const url = editDept ? `${API_URL}/api/department/${editDept._id}` : `${API_URL}/api/department`;
+      const url = editDept ? `${API_URL}/api/enquiry-departments/${editDept._id}` : `${API_URL}/api/enquiry-departments`;
       const method = editDept ? 'PUT' : 'POST';
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(deptForm)
       });
-      if (!res.ok) throw new Error('Failed to save department');
+      if (!res.ok) {
+        let msg = 'Failed to save department';
+        try {
+          const errJson = await res.json();
+          msg = errJson.message || msg;
+        } catch { /* ignored */ }
+        throw new Error(msg);
+      }
       setDeptModal(false);
       await fetchDepartments();
     } catch (err) {
@@ -198,8 +205,15 @@ export default function Enquiries() {
   const handleDeleteDept = async id => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/department/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete department');
+      const res = await fetch(`${API_URL}/api/enquiry-departments/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        let msg = 'Failed to delete department';
+        try {
+          const errJson = await res.json();
+          msg = errJson.message || msg;
+        } catch { /* ignored */ }
+        throw new Error(msg);
+      }
       setDeleteDeptConfirm(null);
       await fetchDepartments();
     } catch (err) {

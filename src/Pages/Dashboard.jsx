@@ -10,7 +10,10 @@ import {
   MdEmojiEvents,
   MdArrowForward,
   MdCheckCircle,
-  MdAdd
+  MdAdd,
+  MdApartment,
+  MdDiversity3,
+  MdEco
 } from 'react-icons/md';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -25,14 +28,17 @@ export default function Dashboard() {
     leadership: '...',
     publications: '...',
     achievements: '...',
-    facultyAchievements: '...'
+    facultyAchievements: '...',
+    departments: '...',
+    clubs: '...',
+    greenCampus: '...'
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAllCounts = async () => {
       try {
-        const [contactRes, slidersRes, eventsRes, newslettersRes, leadershipRes, pubsRes, achieveRes, facultyAchieveRes] = await Promise.allSettled([
+        const [contactRes, slidersRes, eventsRes, newslettersRes, leadershipRes, pubsRes, achieveRes, facultyAchieveRes, deptsRes, clubsRes, gcRes] = await Promise.allSettled([
           fetch(`${API_URL}/api/contact`),
           fetch(`${API_URL}/api/slider/get-slider`),
           fetch(`${API_URL}/api/events/get-all-events?limit=1`),
@@ -40,7 +46,10 @@ export default function Dashboard() {
           fetch(`${API_URL}/api/leadership/get`),
           fetch(`${API_URL}/api/publication`),
           fetch(`${API_URL}/api/student-achievements?limit=1`),
-          fetch(`${API_URL}/api/faculty-achievements?limit=1`)
+          fetch(`${API_URL}/api/faculty-achievements?limit=1`),
+          fetch(`${API_URL}/api/departments`),
+          fetch(`${API_URL}/api/clubs`),
+          fetch(`${API_URL}/api/green-campus/initiatives`)
         ]);
 
         let contactCount = 0;
@@ -91,6 +100,24 @@ export default function Dashboard() {
           facultyAchievementsCount = json.total ?? 0;
         }
 
+        let deptsCount = 0;
+        if (deptsRes.status === 'fulfilled' && deptsRes.value.ok) {
+          const dJson = await deptsRes.value.json();
+          deptsCount = dJson.count ?? (Array.isArray(dJson.departments) ? dJson.departments.length : 0);
+        }
+
+        let clubsCount = 0;
+        if (clubsRes.status === 'fulfilled' && clubsRes.value.ok) {
+          const clJson = await clubsRes.value.json();
+          clubsCount = clJson.count ?? (Array.isArray(clJson.clubs) ? clJson.clubs.length : 0);
+        }
+
+        let gcCount = 0;
+        if (gcRes.status === 'fulfilled' && gcRes.value.ok) {
+          const gcJson = await gcRes.value.json();
+          gcCount = gcJson.count ?? (Array.isArray(gcJson.initiatives) ? gcJson.initiatives.length : 0);
+        }
+
         setCounts({
           enquiries: contactCount,
           sliders: slidersCount,
@@ -99,7 +126,10 @@ export default function Dashboard() {
           leadership: leadershipCount,
           publications: pubsCount,
           achievements: achievementsCount,
-          facultyAchievements: facultyAchievementsCount
+          facultyAchievements: facultyAchievementsCount,
+          departments: deptsCount,
+          clubs: clubsCount,
+          greenCampus: gcCount
         });
       } catch (err) {
         console.error('Error fetching dashboard counts:', err);
@@ -151,6 +181,36 @@ export default function Dashboard() {
       badgeBg: '#ede9fe',
       badgeColor: '#7c3aed',
       desc: 'Monthly & annual college newsletters in PDF format'
+    },
+    {
+      title: 'Academic Departments',
+      count: counts.departments,
+      route: '/departments',
+      icon: MdApartment,
+      color: 'purple',
+      badgeBg: '#ede9fe',
+      badgeColor: '#6d28d9',
+      desc: 'Nursing departments, curriculum descriptions, lab images & highlights'
+    },
+    {
+      title: 'Clubs & Committees',
+      count: counts.clubs,
+      route: '/clubs',
+      icon: MdDiversity3,
+      color: 'blue',
+      badgeBg: '#e0e7ff',
+      badgeColor: '#4338ca',
+      desc: 'Student clubs, anti-ragging, YRC, aims, objectives & charters'
+    },
+    {
+      title: 'Green Campus',
+      count: counts.greenCampus,
+      route: '/green-campus',
+      icon: MdEco,
+      color: 'green',
+      badgeBg: '#dcfce7',
+      badgeColor: '#15803d',
+      desc: 'Sustainability initiatives, renewable energy, clean drives & photos'
     },
     {
       title: 'Leadership',
@@ -354,6 +414,27 @@ export default function Dashboard() {
             onClick={() => navigate('/news-events')}
           >
             <MdCampaign /> Manage Events
+          </button>
+          <button
+            className="btn-primary"
+            style={{ justifyContent: 'center', padding: '12px 16px', background: '#6d28d9' }}
+            onClick={() => navigate('/departments')}
+          >
+            <MdApartment /> Academic Departments
+          </button>
+          <button
+            className="btn-primary"
+            style={{ justifyContent: 'center', padding: '12px 16px', background: '#4338ca' }}
+            onClick={() => navigate('/clubs')}
+          >
+            <MdDiversity3 /> Clubs & Committees
+          </button>
+          <button
+            className="btn-primary"
+            style={{ justifyContent: 'center', padding: '12px 16px', background: '#15803d' }}
+            onClick={() => navigate('/green-campus')}
+          >
+            <MdEco /> Green Campus
           </button>
           <button
             className="btn-primary"

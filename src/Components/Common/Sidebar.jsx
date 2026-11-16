@@ -10,7 +10,12 @@ import {
   MdScience,
   MdMail,
   MdEmojiEvents,
-  MdLogout
+  MdLogout,
+  MdApartment,
+  MdDiversity3,
+  MdEco,
+  MdDomain,
+  MdSchool
 } from 'react-icons/md';
 
 const navItems = [
@@ -28,6 +33,11 @@ const navItems = [
   {
     section: 'INSTITUTION & ACADEMICS',
     items: [
+      { id: 'departments', label: 'Departments', icon: MdApartment, route: '/departments' },
+      { id: 'courses', label: 'Courses Offered', icon: MdSchool, route: '/courses' },
+      { id: 'clubs', label: 'Clubs & Committees', icon: MdDiversity3, route: '/clubs' },
+      { id: 'green-campus', label: 'Green Campus', icon: MdEco, route: '/green-campus' },
+      { id: 'facilities', label: 'Facilities', icon: MdDomain, route: '/facilities' },
       { id: 'affiliations', label: 'Affiliations', icon: MdNewspaper, route: '/affiliations' },
       { id: 'statutes', label: 'Statutory Disclosure', icon: MdNewspaper, route: '/statutes' },
       { id: 'leadership', label: 'Leadership', icon: MdGroups, route: '/leadership' },

@@ -130,7 +130,7 @@ input, select, textarea { font-family: inherit; }
 .logo-text p { font-size: 11px; color: var(--sidebar-text); }
 .admin-badge {
   background: rgba(75, 46, 131, 0.4);
-  color: #c4b5e8;
+  color: #ffffff;
   font-size: 10px;
   font-weight: 600;
   padding: 2px 8px;
@@ -165,7 +165,7 @@ input, select, textarea { font-family: inherit; }
 .nav-item:hover { background: var(--sidebar-hover); color: #d4ccea; }
 .nav-item.active {
   background: linear-gradient(90deg, rgba(107,79,163,0.25), rgba(107,79,163,0.06));
-  color: #c4b5e8;
+  color: #ffffff;
 }
 .nav-item.active::before {
   content: '';

@@ -1,4 +1,6 @@
 import React from 'react';
+import GreenCampus from './Pages/GreenCampus';
+import ErrorBoundary from './Components/Common/ErrorBoundary';
 import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { AuthProvider } from './Context/AuthContext';
 import ProtectedRoute from './Components/Common/ProtectedRoute';
@@ -14,6 +16,10 @@ import Affiliations from './Pages/Affiliations';
 import Leadership from './Pages/Leadership';
 import Research from './Pages/Research';
 import Achievements from './Pages/Achievements';
+import Departments from './Pages/Departments';
+import Clubs from './Pages/Clubs';
+import Facilities from './Pages/Facilities';
+import Courses from './Pages/Courses';
 import Sidebar from './Components/Common/Sidebar';
 import Topbar from './Components/Common/Topbar';
 import './assets/styles/main.css';
@@ -28,6 +34,11 @@ const pageMap = {
   '/affiliations': { id: 'affiliations', title: 'Affiliations' },
   '/statutes': { id: 'statutes', title: 'Statutory Disclosure' },
   '/newsletters': { id: 'newsletters', title: 'Newsletters' },
+  '/departments': { id: 'departments', title: 'Academic Departments' },
+  '/courses': { id: 'courses', title: 'Courses Offered' },
+  '/clubs': { id: 'clubs', title: 'Clubs & Committees' },
+  '/green-campus': { id: 'green-campus', title: 'Green Campus' },
+  '/facilities': { id: 'facilities', title: 'Facilities' },
   '/leadership': { id: 'leadership', title: 'Leadership' },
   '/research': { id: 'research', title: 'Research & Publications' },
   '/faculty-achievements': { id: 'faculty-achievements', title: 'Faculty Achievements' },
@@ -69,6 +80,11 @@ function AdminLayout() {
             <Route path="/affiliations" element={<Affiliations />} />
             <Route path="/statutes" element={<Statutes />} />
             <Route path="/newsletters" element={<Newsletters />} />
+            <Route path="/departments" element={<Departments />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/clubs" element={<Clubs />} />
+            <Route path="/green-campus" element={<GreenCampus />} />
+            <Route path="/facilities" element={<Facilities />} />
             <Route path="/leadership" element={<Leadership />} />
             <Route path="/research" element={<Research />} />
             <Route path="/faculty-achievements" element={<Achievements key="faculty" type="faculty" />} />
@@ -92,7 +108,7 @@ function App() {
           path="/*"
           element={
             <ProtectedRoute>
-              <AdminLayout />
+              <ErrorBoundary><AdminLayout /></ErrorBoundary>
             </ProtectedRoute>
           }
         />
