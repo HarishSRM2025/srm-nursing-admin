@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   MdSlideshow,
@@ -10,13 +10,14 @@ import {
   MdEmojiEvents,
   MdArrowForward,
   MdCheckCircle,
-  MdAdd,
   MdApartment,
   MdDiversity3,
-  MdEco
+  MdEco,
+  MdSchool,
+  MdRule
 } from 'react-icons/md';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = (import.meta.env.VITE_API_URL || import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000').replace(/\/$/, '');
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -31,14 +32,16 @@ export default function Dashboard() {
     facultyAchievements: '...',
     departments: '...',
     clubs: '...',
-    greenCampus: '...'
+    greenCampus: '...',
+    placements: '...',
+    codeOfConduct: '...'
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAllCounts = async () => {
       try {
-        const [contactRes, slidersRes, eventsRes, newslettersRes, leadershipRes, pubsRes, achieveRes, facultyAchieveRes, deptsRes, clubsRes, gcRes] = await Promise.allSettled([
+        const [contactRes, slidersRes, eventsRes, newslettersRes, leadershipRes, pubsRes, achieveRes, facultyAchieveRes, deptsRes, clubsRes, gcRes, placementsRes, conductRes] = await Promise.allSettled([
           fetch(`${API_URL}/api/contact`),
           fetch(`${API_URL}/api/slider/get-slider`),
           fetch(`${API_URL}/api/events/get-all-events?limit=1`),
@@ -49,7 +52,9 @@ export default function Dashboard() {
           fetch(`${API_URL}/api/faculty-achievements?limit=1`),
           fetch(`${API_URL}/api/departments`),
           fetch(`${API_URL}/api/clubs`),
-          fetch(`${API_URL}/api/green-campus/initiatives`)
+          fetch(`${API_URL}/api/green-campus/initiatives`),
+          fetch(`${API_URL}/api/placements`),
+          fetch(`${API_URL}/api/code-of-conduct`)
         ]);
 
         let contactCount = 0;
@@ -118,6 +123,18 @@ export default function Dashboard() {
           gcCount = gcJson.count ?? (Array.isArray(gcJson.initiatives) ? gcJson.initiatives.length : 0);
         }
 
+        const readCount = async (result, select) => {
+          if (result.status !== 'fulfilled' || !result.value.ok) return 'Unavailable';
+          try {
+            const json = await result.value.json();
+            return json.success ? select(json.data) : 'Unavailable';
+          } catch {
+            return 'Unavailable';
+          }
+        };
+        const placementCount = await readCount(placementsRes, data => Array.isArray(data?.batches) ? data.batches.length : 'Unavailable');
+        const conductCount = await readCount(conductRes, data => Array.isArray(data) ? data.length : 'Unavailable');
+
         setCounts({
           enquiries: contactCount,
           sliders: slidersCount,
@@ -129,7 +146,9 @@ export default function Dashboard() {
           facultyAchievements: facultyAchievementsCount,
           departments: deptsCount,
           clubs: clubsCount,
-          greenCampus: gcCount
+          greenCampus: gcCount,
+          placements: placementCount,
+          codeOfConduct: conductCount
         });
       } catch (err) {
         console.error('Error fetching dashboard counts:', err);
@@ -142,6 +161,26 @@ export default function Dashboard() {
   }, []);
 
   const modules = [
+    {
+      title: 'Placements',
+      count: counts.placements,
+      route: '/placements',
+      icon: MdSchool,
+      color: 'purple',
+      badgeBg: '#ede9fe',
+      badgeColor: '#7c3aed',
+      desc: 'Placement batches, hospital recruiters, international placements & statistics'
+    },
+    {
+      title: 'Code of Conduct',
+      count: counts.codeOfConduct,
+      route: '/code-of-conduct',
+      icon: MdRule,
+      color: 'teal',
+      badgeBg: '#cffafe',
+      badgeColor: '#0891b2',
+      desc: 'Conduct sections, committee members, student rules & staff guidelines'
+    },
     {
       title: 'Contact Enquiries',
       count: counts.enquiries,
@@ -381,6 +420,15 @@ export default function Dashboard() {
             </div>
           );
         })}
+      </div>
+
+      <div className="conduct-actions" aria-label="Placement and conduct management">
+        <button type="button" className="btn-primary" onClick={() => navigate('/placements')}>
+          <MdSchool /> Manage Placements
+        </button>
+        <button type="button" className="btn-primary" onClick={() => navigate('/code-of-conduct')}>
+          <MdRule /> Manage Code of Conduct
+        </button>
       </div>
 
       {/* Quick Action Buttons */}
