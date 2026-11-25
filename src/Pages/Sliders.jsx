@@ -3,7 +3,7 @@ import { MdAdd, MdEdit, MdDelete, MdSearch, MdSlideshow, MdCloudUpload, MdImage 
 import Modal from '../Components/Common/Modal';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const emptyForm = { tagline: '', title: '', description: '', status: 'Active', order: '', image: '', imageFile: null };
+const emptyForm = { tagline: '', title: '', description: '', status: 'Active', order: '', image: '', imageFile: null, mobileImageFile: null };
 
 export default function Sliders() {
   const [data, setData] = useState([]);
@@ -13,6 +13,15 @@ export default function Sliders() {
   const [editItem, setEditItem] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [imgPreview, setImgPreview] = useState('');
+  const [mobileImgPreview, setMobileImgPreview] = useState('');
+
+  useEffect(() => () => {
+    if (imgPreview.startsWith('blob:')) URL.revokeObjectURL(imgPreview);
+  }, [imgPreview]);
+
+  useEffect(() => () => {
+    if (mobileImgPreview.startsWith('blob:')) URL.revokeObjectURL(mobileImgPreview);
+  }, [mobileImgPreview]);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -44,7 +53,7 @@ export default function Sliders() {
      (d.Tag && d.Tag.toLowerCase().includes(search.toLowerCase())))
   );
 
-  const openAdd = () => { setEditItem(null); setForm(emptyForm); setImgPreview(''); setModal(true); };
+  const openAdd = () => { setEditItem(null); setForm(emptyForm); setImgPreview(''); setMobileImgPreview(''); setModal(true); };
   const openEdit = item => {
     setEditItem(item);
     setForm({
@@ -54,9 +63,11 @@ export default function Sliders() {
       status: item.Status || 'Active',
       order: item.Order || '',
       image: item.Image || '',
-      imageFile: null
+      imageFile: null,
+      mobileImageFile: null
     });
     setImgPreview(`${API_URL}/uploads/${item.Image}`);
+    setMobileImgPreview(item.MobileImage ? `${API_URL}/uploads/${item.MobileImage}` : '');
     setModal(true);
   };
   
@@ -79,6 +90,9 @@ export default function Sliders() {
     formData.append('Order', Number(form.order));
     if (form.imageFile) {
       formData.append('Image', form.imageFile);
+    }
+    if (form.mobileImageFile) {
+      formData.append('MobileImage', form.mobileImageFile);
     }
 
     try {
@@ -132,11 +146,16 @@ export default function Sliders() {
     }
   };
 
-  const handleImg = e => {
+  const handleImg = (e, mobile = false) => {
     const file = e.target.files[0];
     if (file) {
-      setImgPreview(URL.createObjectURL(file));
-      setForm(f => ({ ...f, imageFile: file }));
+      if (!file.type.startsWith('image/') || file.size > 5 * 1024 * 1024) {
+        alert('Please select an image up to 5MB');
+        e.target.value = '';
+        return;
+      }
+      (mobile ? setMobileImgPreview : setImgPreview)(URL.createObjectURL(file));
+      setForm(f => ({ ...f, [mobile ? 'mobileImageFile' : 'imageFile']: file }));
     }
   };
 
@@ -258,7 +277,7 @@ export default function Sliders() {
       >
         <div className="form-grid">
           <div className="form-group full">
-            <label className="form-label">Slider Image {editItem ? '(Leave empty to keep existing)' : <span className="required">*</span>}</label>
+            <label className="form-label">Desktop Slider Image {editItem ? '(Leave empty to keep existing)' : <span className="required">*</span>}</label>
             <label className="image-upload-area" style={{ cursor: 'pointer' }}>
               <input type="file" accept="image/*" onChange={handleImg} disabled={loading} style={{ display: 'none' }} />
               {imgPreview ? (
@@ -278,6 +297,29 @@ export default function Sliders() {
                 </div>
               )}
             </label>
+          </div>
+          <div className="form-group full">
+            <label className="form-label">Mobile Slider Image (Optional)</label>
+            <label className="image-upload-area" style={{ cursor: 'pointer' }}>
+              <input type="file" accept="image/*" aria-label="Mobile Slider Image" onChange={e => handleImg(e, true)} disabled={loading} style={{ display: 'none' }} />
+              {mobileImgPreview ? (
+                <div style={{ display: 'flex', gap: 16, alignItems: 'center', width: '100%' }}>
+                  <img src={mobileImgPreview} alt="Mobile preview" className="img-preview" style={{ maxHeight: 120, objectFit: 'contain' }} />
+                  <div style={{ flex: 1, fontSize: 12, color: 'var(--text-muted)' }}>
+                    {form.mobileImageFile ? form.mobileImageFile.name : 'Using current mobile image'}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="upload-icon"><MdCloudUpload /></div>
+                  <div className="upload-text">
+                    <p><strong>Click to upload mobile image</strong></p>
+                    <span>Image up to 5MB. Use a portrait image for mobile screens.</span>
+                  </div>
+                </div>
+              )}
+            </label>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>Shown on screens under 768px. Without a mobile image, the desktop image is used. Leave empty when editing to keep the current image.</p>
           </div>
           <div className="form-group">
             <label className="form-label">Tag Line <span className="required">*</span></label>
