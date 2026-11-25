@@ -63,10 +63,14 @@ export default function Dashboard() {
           contactCount = cJson.total !== undefined ? cJson.total : (Array.isArray(cJson.contacts) ? cJson.contacts.length : 0);
         }
 
-        let slidersCount = 0;
+        let slidersCount = 'Unavailable';
         if (slidersRes.status === 'fulfilled' && slidersRes.value.ok) {
-          const sJson = await slidersRes.value.json();
-          slidersCount = Array.isArray(sJson) ? sJson.length : sJson.sliders ? sJson.sliders.length : (sJson.data ? sJson.data.length : 0);
+          try {
+            const sJson = await slidersRes.value.json();
+            slidersCount = Array.isArray(sJson.slider) ? sJson.slider.length : 'Unavailable';
+          } catch {
+            slidersCount = 'Unavailable';
+          }
         }
 
         let eventsCount = 0;
@@ -199,7 +203,7 @@ export default function Dashboard() {
       color: 'teal',
       badgeBg: '#cffafe',
       badgeColor: '#0891b2',
-      desc: 'Active Hero Sliders & Banners on the homepage'
+      desc: 'All homepage hero sliders & banners, including inactive slides'
     },
     {
       title: 'News & Events',
